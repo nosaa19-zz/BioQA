@@ -82,15 +82,18 @@
               dataType : 'json',
            }).done(
              function (data) {
-               if(data[0].exactAnswer != undefined && data[0].exactAnswer != null) {
+               if(data.length !== 0){
+                 if(data[0].exactAnswer != undefined && data[0].exactAnswer != null) {
                    $("#answer").text(data[0].exactAnswer.replace(/[\[\]\"]/g, '').replace(/\\n/g, ' '));
-               }
-               else if(data[0].idealAnswer != undefined && data[0].idealAnswer != null){
+                 }
+                 else if(data[0].idealAnswer != undefined && data[0].idealAnswer != null){
                    $("#answer").text(data[0].idealAnswer.replace(/[\[\]\"]/g, '').replace(/\\n/g, ' '));
+                 }
                }
                else {
-                   $("#answer").text("no answer found");
+                 $("#answer").text("no answer found");
                }
+
               });}
       });
     
