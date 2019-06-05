@@ -68,8 +68,14 @@ public class Faker {
         String idealAnswer = questionJson.get("ideal_answer") == null ? null : questionJson.get("ideal_answer").toString();
         question.setIdealAnswer(idealAnswer);
 
-        List<String> exactAnswers = questionJson.get("exact_answers") == null ? null : (List<String>) questionJson.get("exact_answers");
+        String [] exactAnswers = questionJson.get("exact_answer") == null ? null :
+                                 questionJson.get("exact_answer").toString().replaceAll("\\[","")
+                                                                            .replaceAll("]","")
+                                                                            .split(",");
         question.setExactAnswers(exactAnswers);
+
+        List<String> concepts = questionJson.get("concepts") == null ? null : (List<String>) questionJson.get("concepts");
+        question.setConcepts(concepts);
 
         List<Snippet> snippets = questionJson.get("snippets") == null ? null : (List<Snippet>) questionJson.get("snippets");
         question.setSnippets(snippets);

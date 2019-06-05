@@ -6,6 +6,7 @@
     <meta name="author" content="colorlib.com">
     <link href="css/font.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
+    <link href="css/custom.css" rel="stylesheet" />
   </head>
   <body>
     <div class="s130">
@@ -29,7 +30,24 @@
             <button class="btn-search" type="submit">SEARCH</button>
           </div>
         </div>
-        <div>
+        <div class="col-md-12">
+          <div class="inner-form">
+            <div class="col-2 col-md-2" style="text-align: center">
+              <span>Method: </span>
+            </div>
+            <div class="col-4 col-md-4" style="text-align: center">
+              <select id="method">
+                <option value="4">Qgram Similarity</option>
+                <option value="1">WordNet Similarity</option>
+                <option value="2">UMLS Similarity</option>
+                <option value="5">Paragraph Vector</option>
+                <option value="3">Combined Ontology Method</option>
+                <option value="6">Supervised Approach</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="inner-form">
           <div class="col-3 col-md-3" style="text-align: center">
             <span>Sample Question: </span>
           </div>
@@ -49,19 +67,52 @@
             </select>
           </div>
         </div>
-        <div class="col-md-12" style="text-align: center; background: #ffffb3;">
-            <p id="answer"></p>
+        <div class="col-md-12" style="padding-bottom:20px"></div>
+        <div class="col-md-12" id="answerSheet">
+          <div class="slideshow-container">
+            <div id="answer">
+              <div class="mySlides">
+                <q>-</q>
+                <p class="author">-</p>
+              </div>
+            </div>
+            <a class="prev" onclick="plusSlides(-1)">❮</a>
+            <a class="next" onclick="plusSlides(1)">❯</a>
+          </div>
         </div>
       </form>
-      
     </div>
     <script src="js/extention/choices.js"></script>
     <script src="js/extention/jquery-1.7.1.min.js"></script>
     <script type="text/javascript">
+
+        var slideIndex = 1;
+        var target = $('#target');
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function showSlides(n) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex-1].style.display = "block";
+        }
     
       $(document).ready(function() {
+        var methodType = 4;
+        $("#answerSheet").hide();
         $("#sample").change(function () {
             $("#search").val(this.value);
+        });
+        $("#method").change(function () {
+            methodType = this.value;
         });
         // SUBMIT FORM
         $("#searchForm").submit(function(event) {
@@ -69,7 +120,7 @@
           event.preventDefault();
           doPostQuery();
         });
-    
+
         function doPostQuery(){
             
             // DO POST
@@ -78,23 +129,44 @@
               cache: false,
               contentType : "application/json",
               url: "/api/_search/question",
-              data : JSON.stringify($("#search").val()),
+              data : JSON.stringify({ "query": $("#search").val(), "methodType" : methodType }),
               dataType : 'json',
            }).done(
              function (data) {
-               if(data.length !== 0){
-                 if(data[0].exactAnswer != undefined && data[0].exactAnswer != null) {
-                   $("#answer").text(data[0].exactAnswer.replace(/[\[\]\"]/g, '').replace(/\\n/g, ' '));
+                 var slide  =  '';
+                 var answer = '';
+                 var question = '';
+                 if(data.length !== 0){
+                     for(var i=0;i<data.length;i++){
+                         question = data[i].body;
+                         if(data[i].exactAnswer != undefined && data[i].exactAnswer != null) {
+                             answer = data[i].exactAnswer.replace(/[\[\]\"]/g, '').replace(/\\n/g, ' ');
+                         }
+                         else if(data[i].idealAnswer != undefined && data[i].idealAnswer != null){
+                             answer = data[i].idealAnswer.replace(/[\[\]\"]/g, '').replace(/\\n/g, ' ');
+                         }
+                         if(i==0){
+                             slide += '<div class="mySlides" style="display: block;">';
+                         }
+                         else {
+                             slide += '<div class="mySlides">';
+                         }
+                         slide += '<q>';
+                         slide += answer;
+                         slide += '</q>';
+                         slide += '<p class="author">';
+                         slide += question;
+                         slide += '</p></div>';
+                     }
+                     $("#answer").html(slide);
+                     $("#answerSheet").show();
                  }
-                 else if(data[0].idealAnswer != undefined && data[0].idealAnswer != null){
-                   $("#answer").text(data[0].idealAnswer.replace(/[\[\]\"]/g, '').replace(/\\n/g, ' '));
+                 else {
+                     $("#answer").text("no answer found");
+                     $("#answerSheet").show();
                  }
-               }
-               else {
-                 $("#answer").text("no answer found");
-               }
-
-              });}
+              });
+        }
       });
     
     

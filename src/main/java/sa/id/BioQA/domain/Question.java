@@ -10,13 +10,14 @@ import java.util.List;
 public class Question implements Serializable{
 
     @Id
-    String idQuestion;
-    String type;
-    String body;
-    List<String> documents;
-    String idealAnswer;
-    List<String> exactAnswers;
-    List<Snippet> snippets;
+    private String idQuestion;
+    private String type;
+    private String body;
+    private List<String> documents;
+    private String idealAnswer;
+    private String[] exactAnswers;
+    private List<String> concepts;
+    private List<Snippet> snippets;
 
     public String getIdQuestion() { return idQuestion;
     }
@@ -55,13 +56,13 @@ public class Question implements Serializable{
         this.idealAnswer = idealAnswer;
     }
 
-    public List<String> getExactAnswers() {
-        return exactAnswers;
-    }
+    public String[] getExactAnswers() { return exactAnswers; }
 
-    public void setExactAnswers(List<String> exactAnswers) {
-        this.exactAnswers = exactAnswers;
-    }
+    public void setExactAnswers(String[] exactAnswers) { this.exactAnswers = exactAnswers; }
+
+    public List<String> getConcepts() { return concepts; }
+
+    public void setConcepts(List<String> concepts) { this.concepts = concepts; }
 
     public List<Snippet> getSnippets() {
         return snippets;
@@ -71,7 +72,7 @@ public class Question implements Serializable{
         this.snippets = snippets;
     }
 
-    public Question(String idQuestion, String type, String body, List<String> documents, String idealAnswer, List<String> exactAnswers, List<Snippet> snippets) {
+    public Question(String idQuestion, String type, String body, List<String> documents, String idealAnswer, String[] exactAnswers, List<String> concepts, List<Snippet> snippets) {
         super();
         this.idQuestion = idQuestion;
         this.type = type;
@@ -79,6 +80,7 @@ public class Question implements Serializable{
         this.documents = documents;
         this.idealAnswer = idealAnswer;
         this.exactAnswers = exactAnswers;
+        this.concepts = concepts;
         this.snippets = snippets;
     }
     public Question(){}
