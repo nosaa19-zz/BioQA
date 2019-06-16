@@ -9,6 +9,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 import sa.id.BioQA.domain.Question;
 import sa.id.BioQA.domain.Similarity;
+import sa.id.BioQA.domain.Snippet;
 import sa.id.BioQA.repository.QuestionSearchRepository;
 
 import java.util.*;
@@ -64,6 +65,9 @@ public class QuestionService {
     public List<Question> search(String query, Integer size, Integer methodType) {
         System.out.println("Request to search for a page of Question for query {}" + query);
 
+        double elapsedSeconds;
+        long tStart, tEnd, tDelta;
+        tStart = System.currentTimeMillis();
         /*QueryBuilder boolQueryBuilder = queryStringQuery(query)
                 .queryName("body");
 
@@ -73,7 +77,13 @@ public class QuestionService {
         List<Question> questions = Lists.newArrayList(questionSearchRepository.findAll());
         List<Similarity> similarities = new ArrayList<>();
         for(int i = 0; i<questions.size(); i++){
-            similarities.add(new Similarity(i, ssesService.doCalculation(query, questions.get(i).getBody(), methodType)));
+            List<Snippet> snippets = questions.get(i).getSnippets();
+            if(methodType != 4){
+                similarities.add(new Similarity(i, ssesService.doCalculation(query, questions.get(i).getBody(), methodType)));
+            }
+            else {
+                similarities.add(new Similarity(i, getMaxScoreFromSnippets(snippets, query, methodType)));
+            }
         }
 
         Collections.sort(similarities, Collections.reverseOrder());
@@ -85,6 +95,33 @@ public class QuestionService {
                     +" | score : "+similarities.get(i).getScore());*/
             result.add(questions.get(similarities.get(i).getIndex()));
         }
+        tEnd = System.currentTimeMillis();
+        tDelta = tEnd - tStart;
+        elapsedSeconds = tDelta / 1000.0;
+        System.out.println("search done in "+elapsedSeconds+ " seconds");
+        return result;
+    }
+
+    public Double getAverageScoreFromSnippets(List<Snippet> snippets, String query, Integer methodType){
+      double result = 0.0, sum = 0.0;
+
+      for(Snippet o : snippets){
+          sum = sum + ssesService.doCalculation(query, o.getText(), methodType);
+      }
+
+      result = sum / snippets.size();
+      return result;
+    }
+
+    public Double getMaxScoreFromSnippets(List<Snippet> snippets, String query, Integer methodType){
+        double result = 0.0, max = 0.0;
+
+        for(Snippet o : snippets){
+            double val = ssesService.doCalculation(query, o.getText(), methodType);
+            if(val > max) max = val;
+        }
+
+        result = max;
         return result;
     }
 }

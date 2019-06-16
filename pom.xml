@@ -88,6 +88,32 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.12</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>23.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.cmu.lti</groupId>
+			<artifactId>jawjaw</artifactId>
+			<scope>system</scope>
+            <systemPath>D:/projects/apps/biosses/jar/jawjaw-1.0.2.jar</systemPath>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.cmu.lti.oaqa.bio</groupId>
+			<artifactId>skr-webapi</artifactId>
+			<scope>system</scope>
+            <systemPath>D:/projects/apps/biosses/jar/SKR_Web_API_V2_3.jar</systemPath>
+			<version>0.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.cmu.lti</groupId>
+			<artifactId>ws4j</artifactId>
+			<scope>system</scope>
+            <systemPath>D:/projects/apps/biosses/jar/ws4j-1.0.1.jar</systemPath>
+			<version>1.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -10,6 +10,7 @@
   </head>
   <body>
     <div class="s130">
+      <div id="mySpinner"></div>
       <form id="searchForm">
         <div class="col-md-12" style="text-align: center">
             <h1>BioQA</h1>
@@ -69,6 +70,7 @@
         </div>
         <div class="col-md-12" style="padding-bottom:20px"></div>
         <div class="col-md-12" id="answerSheet">
+          <button type="button" onclick="currentSlide(1)">Main Answer</button>
           <div class="slideshow-container">
             <div id="answer">
               <div class="mySlides">
@@ -82,16 +84,20 @@
         </div>
       </form>
     </div>
-    <script src="js/extention/choices.js"></script>
     <script src="js/extention/jquery-1.7.1.min.js"></script>
+    <script src="js/extention/choices.js"></script>
     <script type="text/javascript">
 
         var slideIndex = 1;
-        var target = $('#target');
+
         showSlides(slideIndex);
 
         function plusSlides(n) {
             showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
         }
 
         function showSlides(n) {
@@ -104,9 +110,10 @@
             }
             slides[slideIndex-1].style.display = "block";
         }
-    
+
       $(document).ready(function() {
         var methodType = 4;
+
         $("#answerSheet").hide();
         $("#sample").change(function () {
             $("#search").val(this.value);
@@ -118,11 +125,12 @@
         $("#searchForm").submit(function(event) {
           // Prevent the form from submitting via the browser.
           event.preventDefault();
+          $('#mySpinner').addClass('spinner');
           doPostQuery();
         });
 
         function doPostQuery(){
-            
+
             // DO POST
            	$.ajax({
               type : "POST",
@@ -133,6 +141,7 @@
               dataType : 'json',
            }).done(
              function (data) {
+                 var slideIndex = 1;
                  var slide  =  '';
                  var answer = '';
                  var question = '';
@@ -155,7 +164,7 @@
                          slide += answer;
                          slide += '</q>';
                          slide += '<p class="author">';
-                         slide += question;
+                         slide += (i+1) + ". "+ question;
                          slide += '</p></div>';
                      }
                      $("#answer").html(slide);
@@ -165,11 +174,13 @@
                      $("#answer").text("no answer found");
                      $("#answerSheet").show();
                  }
+
+                 $('#mySpinner').removeClass('spinner');
               });
         }
       });
-    
-    
+
+
     </script>
 
   </body><!-- This templates was made by Colorlib (https://colorlib.com) -->

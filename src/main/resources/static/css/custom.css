@@ -71,3 +71,29 @@ q {font-style: italic;}
 
 /* Add a blue color to the author */
 .author {color: cornflowerblue;}
+
+
+
+
+
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+}
+
+.spinner:before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70px;
+    height: 70px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border-radius: 50%;
+    border: 1px solid #f6f;
+    border-top-color: #0e0;
+    border-right-color: #0dd;
+    border-bottom-color: #f90;
+    animation: spinner .6s linear infinite;
+}
